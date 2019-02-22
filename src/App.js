@@ -1,28 +1,34 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import Header from './components/Header';
+import ViewContractors from './components/ViewContractors';
+import AddContractors from './components/AddContractors';
+import Auth from './components/Auth';
 
-class App extends Component {
-  render() {
+export default function App() {
+    const [page, setPage] = useState('viewContractors');
+
+    const switchPage = pageName => {
+        setPage(pageName);
+    };
+
+    const currentPage = () => {
+        if (page === 'viewContractors') {
+            return <ViewContractors />;
+        } else if (page === 'addContractors') {
+            return <AddContractors />;
+        } else {
+            return <Auth />;
+        }
+    };
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+        <>
+            <Header
+                onLoadViewContractors={switchPage.bind(this, 'viewContractors')}
+                onLoadAddContractors={switchPage.bind(this, 'addContractors')}
+                onLoadAuth={switchPage.bind(this, 'auth')}
+            />
+            {currentPage()}
+        </>
     );
-  }
 }
-
-export default App;
