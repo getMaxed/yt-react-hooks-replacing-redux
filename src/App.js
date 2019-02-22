@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+
 import Header from './components/Header';
 import ViewContractors from './components/ViewContractors';
 import AddContractors from './components/AddContractors';
 import Auth from './components/Auth';
+import AuthContext from './auth-context';
 
 export default function App() {
     const [page, setPage] = useState('viewContractors');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const switchPage = pageName => {
         setPage(pageName);
@@ -17,18 +20,47 @@ export default function App() {
         } else if (page === 'addContractors') {
             return <AddContractors />;
         } else {
-            return <Auth />;
+            return (
+                <>
+                    <br />
+                    <br />
+                    <Auth />
+                </>
+            );
         }
+    };
+
+    const login = () => {
+        setIsAuthenticated(true);
+        switchPage('viewContractors');
+    };
+
+    const logout = () => {
+        setIsAuthenticated(false);
     };
 
     return (
         <>
-            <Header
-                onLoadViewContractors={switchPage.bind(this, 'viewContractors')}
-                onLoadAddContractors={switchPage.bind(this, 'addContractors')}
-                onLoadAuth={switchPage.bind(this, 'auth')}
-            />
-            {currentPage()}
+            <AuthContext.Provider
+                value={{
+                    isAuthenticated: isAuthenticated,
+                    login: login,
+                    logout: logout
+                }}
+            >
+                <Header
+                    onLoadViewContractors={switchPage.bind(
+                        this,
+                        'viewContractors'
+                    )}
+                    onLoadAddContractors={switchPage.bind(
+                        this,
+                        'addContractors'
+                    )}
+                    onLoadAuth={switchPage.bind(this, 'auth')}
+                />
+                {currentPage()}
+            </AuthContext.Provider>
         </>
     );
 }
