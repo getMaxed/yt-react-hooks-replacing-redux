@@ -1,7 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
+import { bold } from 'ansi-colors';
 
 const ViewContractors = () => {
-    const [contractors, setContractors] = useState([]);
+    // ~> move reducer outside
+    // ~> add 'you logged in/you logged out'
+
+    const viewContractorsReducer = (state, action) => {
+        switch (action.type) {
+            case 'FETCH':
+                return action.payload;
+            case 'ADD':
+                return [...state, action.payload];
+            case 'REMOVE':
+                return state.filter(
+                    contractor => contractor.id !== action.payload.id
+                );
+            default:
+                return state;
+        }
+    };
+
+    // 3rd param : initial action
+    const [contractors, dispatch] = useReducer(viewContractorsReducer, []);
 
     const fetchContractors = async () => {
         try {
@@ -10,7 +30,7 @@ const ViewContractors = () => {
             );
             const contractors = await res.json();
             console.log(contractors);
-            setContractors(contractors);
+            dispatch({ type: 'FETCH', payload: contractors });
         } catch (err) {
             console.error(err);
         }
@@ -32,6 +52,7 @@ const ViewContractors = () => {
                                 <th>Email</th>
                                 <th>Address</th>
                                 <th>Phone Number</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -50,6 +71,16 @@ const ViewContractors = () => {
                                             {street}, {suite}, {city}
                                         </td>
                                         <td>{phone}</td>
+                                        <td
+                                            style={{
+                                                fontWeight: 'bold',
+                                                color: 'red',
+                                                textAlign: 'center',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            x
+                                        </td>
                                     </tr>
                                 );
                             })}

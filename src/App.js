@@ -43,9 +43,9 @@ export default function App() {
         <>
             <AuthContext.Provider
                 value={{
-                    isAuthenticated: isAuthenticated,
-                    login: login,
-                    logout: logout
+                    isAuthenticated,
+                    login,
+                    logout
                 }}
             >
                 <Header
